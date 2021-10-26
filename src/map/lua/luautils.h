@@ -224,12 +224,12 @@ namespace luautils
     auto  OnItemCheck(CBaseEntity* PTarget, CItem* PItem, ITEMCHECK param = ITEMCHECK::NONE, CBaseEntity* PCaster = nullptr) -> std::tuple<int32, int32, int32>; // check to see if item can be used
     int32 CheckForGearSet(CBaseEntity* PTarget);                                                                                                                 // check for gear sets
 
-    int32 OnMagicCastingCheck(CBaseEntity* PChar, CBaseEntity* PTarget, CSpell* PSpell);                   // triggers when a player attempts to cast a spell
+    int32  OnMagicCastingCheck(CBaseEntity* PChar, CBaseEntity* PTarget, CSpell* PSpell);                   // triggers when a player attempts to cast a spell
     uint32 OnSpellCast(CBattleEntity* PCaster, CBattleEntity* PTarget, CSpell* PSpell);                     // triggered when casting a spell
-    int32 OnSpellPrecast(CBattleEntity* PCaster, CSpell* PSpell);                                          // triggered just before casting a spell
-    auto  OnMonsterMagicPrepare(CBattleEntity* PCaster, CBattleEntity* PTarget) -> std::optional<SpellID>; // triggered when monster wants to use a spell on target
-    int32 OnMagicHit(CBattleEntity* PCaster, CBattleEntity* PTarget, CSpell* PSpell);                      // triggered when spell cast on monster
-    int32 OnWeaponskillHit(CBattleEntity* PMob, CBaseEntity* PAttacker, uint16 PWeaponskill);              // Triggered when Weaponskill strikes monster
+    int32  OnSpellPrecast(CBattleEntity* PCaster, CSpell* PSpell);                                          // triggered just before casting a spell
+    auto   OnMobMagicPrepare(CBattleEntity* PCaster, std::optional<SpellID> startingSpellId) -> std::optional<SpellID>; // triggered when monster wants to use a spell on target
+    int32  OnMagicHit(CBattleEntity* PCaster, CBattleEntity* PTarget, CSpell* PSpell);                      // triggered when spell cast on monster
+    int32  OnWeaponskillHit(CBattleEntity* PMob, CBaseEntity* PAttacker, uint16 PWeaponskill);              // Triggered when Weaponskill strikes monster
 
     int32 OnMobInitialize(CBaseEntity* PMob); // Used for passive trait
     int32 ApplyMixins(CBaseEntity* PMob);
@@ -258,10 +258,11 @@ namespace luautils
     void OnBattlefieldRegister(CCharEntity* PChar, CBattlefield* PBattlefield); // triggers when successfully registered a bcnm
     void OnBattlefieldDestroy(CBattlefield* PBattlefield);                      // triggers when BCNM is destroyed
 
-    int32 OnMobWeaponSkill(CBaseEntity* PChar, CBaseEntity* PMob, CMobSkill* PMobSkill, action_t* action); // triggers when mob weapon skill is used
-    int32 OnMobSkillCheck(CBaseEntity* PChar, CBaseEntity* PMob, CMobSkill* PMobSkill);                    // triggers before mob weapon skill is used, returns 0 if the move is valid
-    int32 OnAutomatonAbilityCheck(CBaseEntity* PChar, CAutomatonEntity* PAutomaton, CMobSkill* PMobSkill);
-    int32 OnAutomatonAbility(CBaseEntity* PTarget, CBaseEntity* PMob, CMobSkill* PMobSkill, CBaseEntity* PMobMaster, action_t* action);
+    uint16 OnMobWeaponSkillPrepare(CBattleEntity* PMob, CBattleEntity* PTarget);
+    int32  OnMobWeaponSkill(CBaseEntity* PChar, CBaseEntity* PMob, CMobSkill* PMobSkill, action_t* action); // triggers when mob weapon skill is used
+    int32  OnMobSkillCheck(CBaseEntity* PChar, CBaseEntity* PMob, CMobSkill* PMobSkill);                    // triggers before mob weapon skill is used, returns 0 if the move is valid
+    int32  OnAutomatonAbilityCheck(CBaseEntity* PChar, CAutomatonEntity* PAutomaton, CMobSkill* PMobSkill);
+    int32  OnAutomatonAbility(CBaseEntity* PTarget, CBaseEntity* PMob, CMobSkill* PMobSkill, CBaseEntity* PMobMaster, action_t* action);
 
     int32 OnAbilityCheck(CBaseEntity* PChar, CBaseEntity* PTarget, CAbility* PAbility, CBaseEntity** PMsgTarget);                                                                               // triggers when a player attempts to use a job ability or roll
     int32 OnPetAbility(CBaseEntity* PPet, CBaseEntity* PMob, CMobSkill* PMobSkill, CBaseEntity* PPetMaster, action_t* action);                                                                  // triggers when pet uses an ability

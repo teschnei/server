@@ -188,8 +188,9 @@ CInstance* CInstanceLoader::LoadInstance()
             PMob->HPscale = Sql_GetFloatData(SqlInstanceHandle, 62);
             PMob->MPscale = Sql_GetFloatData(SqlInstanceHandle, 63);
 
+            // TODO: Remove me
             // Check if we should be looking up scripts for this mob
-            PMob->m_HasSpellScript = (uint8)Sql_GetIntData(SqlInstanceHandle, 64);
+            //PMob->m_HasSpellScript = (uint8)Sql_GetIntData(SqlInstanceHandle, 64);
 
             PMob->m_SpellListContainer = mobSpellList::GetMobSpellList(Sql_GetIntData(SqlInstanceHandle, 65));
 

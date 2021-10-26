@@ -277,7 +277,12 @@ bool CMobController::MobSkill(int wsList)
     {
         wsList = PMob->getMobMod(MOBMOD_SKILL_LIST);
     }
-    auto skillList{ battleutils::GetMobSkillList(wsList) };
+    auto skillList = battleutils::GetMobSkillList(wsList);
+
+    if (auto overrideSkill = luautils::OnMobWeaponSkillPrepare(PMob, PTarget); overrideSkill > 0)
+    {
+        skillList = { overrideSkill };
+    }
 
     if (skillList.empty())
     {
@@ -384,45 +389,39 @@ bool CMobController::TryCastSpell()
 
     m_LastMagicTime = m_Tick - std::chrono::milliseconds(xirand::GetRandomNumber(PMob->getBigMobMod(MOBMOD_MAGIC_COOL) / 2));
 
-    if (PMob->m_HasSpellScript)
+    // Find random spell from list
+    std::optional<SpellID> chosenSpellId;
+    if (m_firstSpell)
     {
-        // skip logic and follow script
-        auto chosenSpellId = luautils::OnMonsterMagicPrepare(PMob, PTarget);
-        if (chosenSpellId)
-        {
-            CastSpell(chosenSpellId.value());
-            return true;
-        }
+        // mobs first spell, should be aggro spell
+        chosenSpellId = PMob->SpellContainer->GetAggroSpell();
+        m_firstSpell  = false;
     }
     else
     {
-        // find random spell
-        std::optional<SpellID> chosenSpellId;
-        if (m_firstSpell)
-        {
-            // mobs first spell, should be aggro spell
-            chosenSpellId = PMob->SpellContainer->GetAggroSpell();
-            m_firstSpell  = false;
-        }
-        else
-        {
-            chosenSpellId = PMob->SpellContainer->GetSpell();
-        }
-
-        if (chosenSpellId)
-        {
-            //#TODO: select target based on spell type
-            CastSpell(chosenSpellId.value());
-            return true;
-        }
+        chosenSpellId = PMob->SpellContainer->GetSpell();
     }
+
+    // Try to get an override spell from the script (if available)
+    auto possibleOverriddenSpell = luautils::OnMobMagicPrepare(PMob, chosenSpellId);
+    if (possibleOverriddenSpell.has_value())
+    {
+        chosenSpellId = possibleOverriddenSpell;
+    }
+
+    if (chosenSpellId.has_value())
+    {
+        CastSpell(chosenSpellId.value());
+        return true;
+    }
+
     return false;
 }
 
 bool CMobController::CanCastSpells()
 {
     TracyZoneScoped;
-    if (!PMob->SpellContainer->HasSpells() && !PMob->m_HasSpellScript)
+    if (!PMob->SpellContainer->HasSpells())
     {
         return false;
     }
