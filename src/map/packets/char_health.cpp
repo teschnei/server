@@ -48,6 +48,9 @@ CCharHealthPacket::CCharHealthPacket(CCharEntity* PChar)
         ref<uint8>(0x21) = PChar->GetMLevel();
         ref<uint8>(0x22) = PChar->GetSJob();
         ref<uint8>(0x23) = PChar->GetSLevel();
+
+        ref<uint8>(0x24) = 0; // Master Level
+        ref<uint8>(0x25) = 0; // Master Breaker
     }
 }
 
@@ -71,4 +74,7 @@ CCharHealthPacket::CCharHealthPacket(CTrustEntity* PTrust)
     ref<uint8>(0x21) = PTrust->GetMLevel();
     ref<uint8>(0x22) = PTrust->GetSJob();
     ref<uint8>(0x23) = PTrust->GetSLevel();
+
+    ref<uint8>(0x24) = 0; // Master Level
+    ref<uint8>(0x25) = 0; // Master Breaker
 }

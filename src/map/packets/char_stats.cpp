@@ -84,4 +84,10 @@ CCharStatsPacket::CCharStatsPacket(CCharEntity* PChar)
     ref<uint32>(0x58) = (charutils::GetPoints(PChar, "unity_accolades") << 10) | (0x00 << 5 | PChar->profile.unity_leader);
     ref<uint16>(0x5C) = charutils::GetPoints(PChar, "current_accolades") / 1000; // Partial Personal Eval
     ref<uint16>(0x5E) = charutils::GetPoints(PChar, "prev_accolades") / 1000;    // Personal Eval
+
+    ref<uint8>(0x65) = 0; // Master Level
+    ref<uint8>(0x66) = 0; // Master Breaker
+
+    ref<uint32>(0x68) = 0; // Current Exemplar Points
+    ref<uint32>(0x6C) = 0; // Required Exemplar Points
 }
